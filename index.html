@@ -115,6 +115,22 @@
 </head>
 
 <body>
+
+  <div id="download-status" style="
+  position: fixed;
+  top: 10px;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #27ae60;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 5px;
+  font-weight: bold;
+  display: none;
+  z-index: 9999;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+"></div>
+
 <div id="resume-content">
   <header>
     <h1>AKSHAY BADE</h1>
@@ -235,8 +251,20 @@
 
 <script>
 
-
 async function generatePDF() {
+  // Function to show message
+  const showMessage = (message, bgColor = '#27ae60') => {
+    const status = document.getElementById('download-status');
+    status.textContent = message;
+    status.style.backgroundColor = bgColor;
+    status.style.display = 'block';
+    setTimeout(() => {
+      status.style.display = 'none';
+    }, 3000); // Hide after 3 seconds
+  };
+
+  showMessage("📄 Download started...", '#2980b9');
+
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF('p', 'pt', 'a4');
   const resume = document.getElementById('resume-content');
@@ -248,7 +276,6 @@ async function generatePDF() {
   const marginTop = 135, spacing = 4;
   let currentY = marginTop, pageNumber = 1;
 
-  // ⬇️ Wrap and fix header width before capture
   const headerWrapper = document.createElement('div');
   headerWrapper.className = 'pdf-export-mode';
   headerWrapper.style.width = '794px';
@@ -309,9 +336,8 @@ async function generatePDF() {
   }
 
   pdf.save('Akshay_Bade_Resume.pdf');
-  alert("✅ Resume downloaded successfully!");
+  showMessage("✅ Resume downloaded successfully!", '#27ae60');
 }
-
 
 
 </script>
