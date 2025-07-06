@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Hello React DOM JS</title>
+    <!-- React & ReactDOM CDN -->
+    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+    <!-- Babel to allow JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+      }
+
+      button , p{
+        padding: 10px 15px;
+        font-size: 16px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="root"></div>
+
+    <!-- Your React Code -->
+    <script type="text/babel">
+      
+
+      const div =
+        <div>
+        <button>Hello</button>
+        <p>Test</p>
+        </div>
+      
+
+      const root = ReactDOM.createRoot(document.querySelector('.root'));
+      root.render(div);
+    </script>
+  </body>
+</html>
