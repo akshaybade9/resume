@@ -116,7 +116,7 @@
 
 <body>
 
-<div id="download-status" style="
+ <div id="download-status" style="
   position: fixed;
   bottom: 20px;
   left: 50%;
@@ -133,6 +133,7 @@
   max-width: 90%;
   text-align: center;
 "></div>
+
 
 <div id="resume-content">
   <header>
@@ -153,7 +154,12 @@
 
   <section id="summary">
     <h2>SUMMARY</h2>
-    <p>Experienced Java developer with 1.8+ years of hands-on expertise...</p>
+    <p>Experienced Java developer with 1.8+ years of hands-on expertise in designing, developing,
+      and maintaining high-performance applications. Proficient in Java Programming, Java EE
+      technologies, object-oriented programming principles, Spring Framework, Microservices
+      Architecture and Agile methodologies. Skilled in collaborating with cross-functional teams
+      to analyze requirements and deliver innovative software solutions. Strong problem-solving
+      abilities and a dedication to continuous learning and improvement.</p>
   </section>
 
   <section id="skills">
@@ -181,9 +187,18 @@
     <p><strong>Role:</strong> Software Developer</p>
     <p><strong>Duration:</strong> Oct-2023 – Present</p>
     <p><strong>Project:</strong> Fin-Wiz (Core Banking Solution)</p>
+    <p><strong>Description:</strong> Developed a Core Banking Solution for HOSPET Bank and SHAHU Bank using Java 8+, Spring Boot, Hibernate. Key modules include DEAF, Investment, AML, CKYC integration.</p>
+    <p><strong>Technologies:</strong> Java 8+, Spring Boot, Hibernate, REST, MS SQL Server, Git, Jira</p>
+    <p><strong>Responsibilities:</strong></p>
     <ul>
-      <li>Developed REST APIs and backend logic</li>
-      <li>Collaborated with QA and UI teams</li>
+      <li>Developed REST APIs and backend logic for core modules</li>
+      <li>Collaborated with QA and UI teams to deliver features on time</li>
+      <li>Resolved critical issues in production</li>
+    </ul>
+    <p><strong>Achievements:</strong></p>
+    <ul>
+      <li>Delivered complete functional modules for Core Banking</li>
+      <li>Praised for clean and secure API design</li>
     </ul>
   </section>
 
@@ -191,9 +206,15 @@
     <h3>Anweb Technologies</h3>
     <p><strong>Role:</strong> Software Developer Intern</p>
     <p><strong>Duration:</strong> April – May 2023</p>
+    <p><strong>Project:</strong> Finance Management System</p>
+    <p><strong>Description:</strong> Built a multi-module application with roles like Admin, Employee, Customer. Supported registration and modification workflows.</p>
+    <p><strong>Technologies:</strong> Core Java, J2EE, Hibernate, JSP, Servlet</p>
+    <p><strong>Responsibilities:</strong></p>
     <ul>
-      <li>Backend development using Java</li>
+      <li>Backend development using Java and Servlets</li>
       <li>Integrated Hibernate ORM with MySQL</li>
+      <li>Built REST endpoints and tested with Postman</li>
+      <li>Involved in documentation and unit testing</li>
     </ul>
   </section>
 
@@ -206,19 +227,21 @@
 
   <section id="languages">
     <h2>PERSONAL PROFILE</h2>
-    <ul>
-      <li><strong>Full name:</strong> Akshay Navnath Bade</li>
-      <li><strong>Father’s name:</strong> Navnath Kisan Bade</li>
-      <li><strong>Marital status:</strong> Married</li>
-      <li><strong>DOB:</strong> 29 Jul 1998</li>
-      <li><strong>Languages:</strong> English, Marathi, Hindi</li>
-    </ul>
+      <ul>
+        <li><strong>Full name::</strong> Akshay Navnath Bade.</li>
+        <li><strong>Father’s name:</strong> Navnath
+          Kisan Bade</li>
+        <li><strong>Marital status:</strong> Married.</li>
+        <li><strong>Date Of Birth:</strong> 29 Jul 1998.</li>
+        <li><strong>Languages:</strong> English, Marathi, Hindi</li>
+        <li><strong>Nationality:</strong> Indian.</li>
+      </ul>
   </section>
 
   <section id="certifications">
     <h2>CERTIFICATIONS</h2>
     <ul>
-      <li>Java Backend Development - Exponent IT</li>
+      <li>Java Backend Development - Exponent IT Training & Services, Pune</li>
       <li>Spring & Microservices - Udemy</li>
     </ul>
   </section>
@@ -235,18 +258,21 @@
 </div>
 
 <script>
-async function generatePDF() {
-  const showMessage = (message, bgColor = '#27ae60') => {
-    const status = document.getElementById('download-status');
-    status.textContent = message;
-    status.style.backgroundColor = bgColor;
-    status.style.display = 'block';
-    setTimeout(() => {
-      status.style.display = 'none';
-    }, 3000);
-  };
 
-  showMessage("📄 Download started...");
+async function generatePDF() {
+  // Function to show message
+ const showMessage = (message, bgColor = '#27ae60') => {
+  const status = document.getElementById('download-status');
+  status.textContent = message;
+  status.style.backgroundColor = bgColor;
+  status.style.display = 'block';
+  setTimeout(() => {
+    status.style.display = 'none';
+  }, 3000); // Hide after 3 seconds
+};
+
+
+  showMessage("📄 Download started...", '#27ae60');
 
   const { jsPDF } = window.jspdf;
   const pdf = new jsPDF('p', 'pt', 'a4');
@@ -267,7 +293,7 @@ async function generatePDF() {
   document.body.appendChild(headerWrapper);
 
   const headerCanvas = await html2canvas(headerWrapper, {
-    scale: 1.5,
+    scale: 2,
     useCORS: true,
     backgroundColor: '#fff',
     width: 794
@@ -275,18 +301,15 @@ async function generatePDF() {
 
   document.body.removeChild(headerWrapper);
 
-  const headerImg = headerCanvas.toDataURL('image/png', 1.0);
+  const headerImg = headerCanvas.toDataURL('image/jpeg', 1.0);
   const headerHeight = headerCanvas.height * (pageWidth - 80) / headerCanvas.width;
 
-  const addHeader = () => pdf.addImage(headerImg, 'PNG', 40, 30, pageWidth - 80, headerHeight);
+  const addHeader = () => pdf.addImage(headerImg, 'JPEG', 40, 30, pageWidth - 80, headerHeight);
   const addFooter = () => {
     pdf.setFontSize(10);
     pdf.setTextColor('#666');
     pdf.text(`Page ${pageNumber}`, pageWidth - 60, pageHeight - 20);
   };
-
-  addHeader();
-  addFooter();
 
   for (let section of sections) {
     const wrapper = document.createElement('div');
@@ -297,7 +320,7 @@ async function generatePDF() {
     document.body.appendChild(wrapper);
 
     const canvas = await html2canvas(wrapper, {
-      scale: 1.5,
+      scale: 2,
       useCORS: true,
       backgroundColor: '#fff',
       width: 794
@@ -305,7 +328,7 @@ async function generatePDF() {
 
     document.body.removeChild(wrapper);
 
-    const imgData = canvas.toDataURL('image/png', 1.0);
+    const imgData = canvas.toDataURL('image/jpeg', 1.0);
     const imgWidth = pageWidth - 80;
     const imgHeight = canvas.height * imgWidth / canvas.width;
 
@@ -313,17 +336,19 @@ async function generatePDF() {
       pdf.addPage();
       pageNumber++;
       currentY = marginTop;
-      addHeader();
-      addFooter();
     }
 
-    pdf.addImage(imgData, 'PNG', 40, currentY, imgWidth, imgHeight);
+    addHeader();
+    addFooter();
+    pdf.addImage(imgData, 'JPEG', 40, currentY, imgWidth, imgHeight);
     currentY += imgHeight + spacing;
   }
 
   pdf.save('Akshay_Bade_Resume.pdf');
-  showMessage("✅ Resume downloaded successfully!");
+  showMessage("✅ Resume downloaded successfully!", '#27ae60');
 }
+
+
 </script>
 </body>
 </html>
