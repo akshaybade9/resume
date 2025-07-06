@@ -116,20 +116,24 @@
 
 <body>
 
-  <div id="download-status" style="
+ <div id="download-status" style="
   position: fixed;
-  top: 10px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   background-color: #27ae60;
   color: white;
   padding: 10px 20px;
-  border-radius: 5px;
+  border-radius: 6px;
   font-weight: bold;
   display: none;
   z-index: 9999;
-  box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  font-size: 14px;
+  max-width: 90%;
+  text-align: center;
 "></div>
+
 
 <div id="resume-content">
   <header>
@@ -253,15 +257,16 @@
 
 async function generatePDF() {
   // Function to show message
-  const showMessage = (message, bgColor = '#27ae60') => {
-    const status = document.getElementById('download-status');
-    status.textContent = message;
-    status.style.backgroundColor = bgColor;
-    status.style.display = 'block';
-    setTimeout(() => {
-      status.style.display = 'none';
-    }, 3000); // Hide after 3 seconds
-  };
+ const showMessage = (message, bgColor = '#27ae60') => {
+  const status = document.getElementById('download-status');
+  status.textContent = message;
+  status.style.backgroundColor = bgColor;
+  status.style.display = 'block';
+  setTimeout(() => {
+    status.style.display = 'none';
+  }, 3000); // Hide after 3 seconds
+};
+
 
   showMessage("📄 Download started...", '#2980b9');
 
