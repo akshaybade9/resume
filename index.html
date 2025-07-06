@@ -234,67 +234,86 @@
 </div>
 
 <script>
-  async function generatePDF() {
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF('p', 'pt', 'a4');
-    const resume = document.getElementById('resume-content');
-    const sections = resume.querySelectorAll('section');
-    const headerElement = resume.querySelector('header');
 
-    const pageWidth = pdf.internal.pageSize.getWidth();
-    const pageHeight = pdf.internal.pageSize.getHeight();
-    const marginTop = 135, spacing = 4;
-    let currentY = marginTop, pageNumber = 1;
 
-    const headerCanvas = await html2canvas(headerElement, {
+async function generatePDF() {
+  const { jsPDF } = window.jspdf;
+  const pdf = new jsPDF('p', 'pt', 'a4');
+  const resume = document.getElementById('resume-content');
+  const sections = resume.querySelectorAll('section');
+  const headerElement = resume.querySelector('header');
+
+  const pageWidth = pdf.internal.pageSize.getWidth();
+  const pageHeight = pdf.internal.pageSize.getHeight();
+  const marginTop = 135, spacing = 4;
+  let currentY = marginTop, pageNumber = 1;
+
+  // ⬇️ Wrap and fix header width before capture
+  const headerWrapper = document.createElement('div');
+  headerWrapper.className = 'pdf-export-mode';
+  headerWrapper.style.width = '794px';
+  headerWrapper.style.background = '#fff';
+  headerWrapper.appendChild(headerElement.cloneNode(true));
+  document.body.appendChild(headerWrapper);
+
+  const headerCanvas = await html2canvas(headerWrapper, {
+    scale: 2,
+    useCORS: true,
+    backgroundColor: '#fff',
+    width: 794
+  });
+
+  document.body.removeChild(headerWrapper);
+
+  const headerImg = headerCanvas.toDataURL('image/jpeg', 1.0);
+  const headerHeight = headerCanvas.height * (pageWidth - 80) / headerCanvas.width;
+
+  const addHeader = () => pdf.addImage(headerImg, 'JPEG', 40, 30, pageWidth - 80, headerHeight);
+  const addFooter = () => {
+    pdf.setFontSize(10);
+    pdf.setTextColor('#666');
+    pdf.text(`Page ${pageNumber}`, pageWidth - 60, pageHeight - 20);
+  };
+
+  for (let section of sections) {
+    const wrapper = document.createElement('div');
+    wrapper.className = 'pdf-export-mode';
+    wrapper.style.background = '#fff';
+    wrapper.style.width = '794px';
+    wrapper.appendChild(section.cloneNode(true));
+    document.body.appendChild(wrapper);
+
+    const canvas = await html2canvas(wrapper, {
       scale: 2,
       useCORS: true,
       backgroundColor: '#fff',
       width: 794
     });
-    const headerImg = headerCanvas.toDataURL('image/jpeg', 1.0);
-    const headerHeight = headerCanvas.height * (pageWidth - 80) / headerCanvas.width;
 
-    const addHeader = () => pdf.addImage(headerImg, 'JPEG', 40, 30, pageWidth - 80, headerHeight);
-    const addFooter = () => {
-      pdf.setFontSize(10);
-      pdf.setTextColor('#666');
-      pdf.text(`Page ${pageNumber}`, pageWidth - 60, pageHeight - 20);
-    };
+    document.body.removeChild(wrapper);
 
-    for (let section of sections) {
-      const wrapper = document.createElement('div');
-      wrapper.className = 'pdf-export-mode';
-      wrapper.style.background = '#fff';
-      wrapper.appendChild(section.cloneNode(true));
-      document.body.appendChild(wrapper);
+    const imgData = canvas.toDataURL('image/jpeg', 1.0);
+    const imgWidth = pageWidth - 80;
+    const imgHeight = canvas.height * imgWidth / canvas.width;
 
-      const canvas = await html2canvas(wrapper, {
-        scale: 2,
-        useCORS: true,
-        backgroundColor: '#fff',
-        width: 794
-      });
-      document.body.removeChild(wrapper);
-
-      const imgData = canvas.toDataURL('image/jpeg', 1.0);
-      const imgWidth = pageWidth - 80;
-      const imgHeight = canvas.height * imgWidth / canvas.width;
-
-      if (currentY + imgHeight > pageHeight - 60) {
-        pdf.addPage();
-        pageNumber++;
-        currentY = marginTop;
-      }
-
-      addHeader();
-      addFooter();
-      pdf.addImage(imgData, 'JPEG', 40, currentY, imgWidth, imgHeight);
-      currentY += imgHeight + spacing;
+    if (currentY + imgHeight > pageHeight - 60) {
+      pdf.addPage();
+      pageNumber++;
+      currentY = marginTop;
     }
 
-    pdf.save('Akshay_Bade_Resume.pdf');
+    addHeader();
+    addFooter();
+    pdf.addImage(imgData, 'JPEG', 40, currentY, imgWidth, imgHeight);
+    currentY += imgHeight + spacing;
   }
+
+  pdf.save('Akshay_Bade_Resume.pdf');
+  alert("✅ Resume downloaded successfully!");
+}
+
+
+
 </script>
 </body>
 </html>
