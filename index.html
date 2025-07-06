@@ -1,41 +1,316 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>Hello React DOM JS</title>
-    <!-- React & ReactDOM CDN -->
-    <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
-    <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
-    <!-- Babel to allow JSX -->
-    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
-    <style>
-      body {
-        font-family: Arial, sans-serif;
-        padding: 20px;
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Akshay Bade - Resume</title>
+
+  <!-- React + Babel -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js" crossorigin></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js" crossorigin></script>
+  <script src="https://unpkg.com/babel-standalone@6/babel.min.js"></script>
+
+  <!-- html2canvas + jsPDF -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 0 10px;
+      background: #f2f4f8;
+      color: #333;
+    }
+    header {
+      background: #2c3e50;
+      color: #fff;
+      padding: 2rem 1rem 3.5rem;
+      text-align: center;
+      border-bottom: 5px solid #1abc9c;
+    }
+    nav {
+      background: #1abc9c;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1rem;
+      padding: 1rem;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    nav a {
+      color: #fff;
+      font-weight: bold;
+      text-decoration: none;
+      padding: 0.5rem 1rem;
+      background: #16a085;
+      border-radius: 5px;
+      transition: background 0.3s;
+      cursor: pointer;
+    }
+    nav a:hover { background: #149174; }
+
+    section {
+      max-width: 860px;
+      margin: 0.8rem auto;
+      padding: 1rem 1.2rem;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 3px 8px rgba(0,0,0,0.06);
+    }
+
+    h2 {
+      color: #2c3e50;
+      border-bottom: 2px solid #1abc9c;
+      padding-bottom: 0.4rem;
+    }
+
+    h3 {
+      color: #34495e;
+      margin-top: 1.3rem;
+    }
+
+    p { line-height: 1.6; margin: 0.3rem 0; }
+    ul { padding-left: 1.5rem; }
+
+    .download-buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin-top: 2rem;
+    }
+
+    .download-buttons button {
+      background: #2980b9;
+      color: #fff;
+      padding: 0.6rem 1.2rem;
+      border: none;
+      border-radius: 5px;
+      font-weight: bold;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .download-buttons button:hover { background: #2471a3; }
+
+    .pdf-export-mode .download-buttons { display: none !important; }
+
+    .pdf-export-mode {
+      font-size: 19px;
+    }
+
+    .pdf-export-mode h1 { font-size: 34px; }
+    .pdf-export-mode h2 { font-size: 25px; margin: 10px 0 6px; }
+    .pdf-export-mode h3 { font-size: 21px; margin: 5px 0; }
+    .pdf-export-mode p,
+    .pdf-export-mode li {
+      font-size: 19px;
+      line-height: 1.5;
+      margin: 2px 0;
+    }
+
+    .pdf-export-mode section {
+      margin: 0.4rem auto;
+      padding: 0.9rem;
+      page-break-inside: avoid;
+    }
+
+    .experience-block {
+      margin: 2rem auto 1.8rem;
+      padding: 1rem 1.2rem 1rem;
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+      border-bottom: 2px dashed #bbb;
+      page-break-inside: avoid;
+    }
+  </style>
+</head>
+
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const scrollToSection = (id) => {
+      const el = document.getElementById(id);
+      if (el) el.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    const generatePDF = async () => {
+      const { jsPDF } = window.jspdf;
+      const pdf = new jsPDF('p', 'pt', 'a4');
+      const resume = document.getElementById('resume-content');
+      const sections = resume.querySelectorAll('section');
+      const headerElement = resume.querySelector('header');
+
+      const pageWidth = pdf.internal.pageSize.getWidth();
+      const pageHeight = pdf.internal.pageSize.getHeight();
+      const marginTop = 135, spacing = 4;
+      let currentY = marginTop, pageNumber = 1;
+
+      const headerCanvas = await html2canvas(headerElement, { scale: 2, useCORS: true, backgroundColor: '#fff' });
+      const headerImg = headerCanvas.toDataURL('image/jpeg', 1.0);
+      const headerHeight = headerCanvas.height * (pageWidth - 80) / headerCanvas.width;
+
+      const addHeader = () => pdf.addImage(headerImg, 'JPEG', 40, 30, pageWidth - 80, headerHeight);
+      const addFooter = () => {
+        pdf.setFontSize(10);
+        pdf.setTextColor('#666');
+        pdf.text(`Page ${pageNumber}`, pageWidth - 60, pageHeight - 20);
+      };
+
+      for (let section of sections) {
+        const wrapper = document.createElement('div');
+        wrapper.className = 'pdf-export-mode';
+        wrapper.style.padding = '20px';
+        wrapper.style.background = '#fff';
+        wrapper.style.width = `${resume.offsetWidth}px`;
+        wrapper.appendChild(section.cloneNode(true));
+        document.body.appendChild(wrapper);
+
+        const canvas = await html2canvas(wrapper, { scale: 2, useCORS: true, backgroundColor: '#fff' });
+        document.body.removeChild(wrapper);
+
+        const imgData = canvas.toDataURL('image/jpeg', 1.0);
+        const imgWidth = pageWidth - 80;
+        const imgHeight = canvas.height * imgWidth / canvas.width;
+
+        if (currentY + imgHeight > pageHeight - 60) {
+          pdf.addPage();
+          pageNumber++;
+          currentY = marginTop;
+        }
+
+        addHeader();
+        addFooter();
+        pdf.addImage(imgData, 'JPEG', 40, currentY, imgWidth, imgHeight);
+        currentY += imgHeight + spacing;
       }
 
-      button , p{
-        padding: 10px 15px;
-        font-size: 16px;
-      }
-    </style>
-  </head>
-  <body>
-    <div class="root"></div>
+      pdf.save('Akshay_Bade_Resume.pdf');
+    };
 
-    <!-- Your React Code -->
-    <script type="text/babel">
-      
+    const App = () => (
+      <div id="resume-content">
+        <header>
+          <h1>AKSHAY BADE</h1>
+          <p>Software Developer</p>
+          <p>Email: akshaybade9@gmail.com | Mobile: 7709933052 | Location: Pune, Maharashtra</p>
+        </header>
 
-      const div =
-        <div>
-        <button>Hello</button>
-        <p>Test</p>
-        </div>
-      
+        <nav>
+          {['summary', 'skills', 'experience', 'education', 'languages', 'certifications', 'declaration'].map(id => (
+            <a key={id} onClick={() => scrollToSection(id)}>{id.replace(/^\w/, c => c.toUpperCase())}</a>
+          ))}
+        </nav>
 
-      const root = ReactDOM.createRoot(document.querySelector('.root'));
-      root.render(div);
-    </script>
-  </body>
+        <section id="summary">
+          <h2>SUMMARY</h2>
+          <p>
+            Experienced Java developer with 1.8+ years of hands-on expertise in designing, developing,
+            and maintaining high-performance applications. Proficient in Java Programming, Java EE
+            technologies, object-oriented programming principles, Spring Framework, Microservices
+            Architecture and Agile methodologies. Skilled in collaborating with cross-functional teams
+            to analyze requirements and deliver innovative software solutions. Strong problem-solving
+            abilities and a dedication to continuous learning and improvement.
+          </p>
+        </section>
+
+        <section id="skills">
+          <h2>TECHNICAL SKILLS</h2>
+          <ul>
+            <li><strong>Programming Languages:</strong> Java (Java 8+)</li>
+            <li><strong>Java Frameworks:</strong> Spring Boot, Spring MVC, Hibernate JPA</li>
+            <li><strong>OOP:</strong> Object-Oriented Programming (OOPs)</li>
+            <li><strong>Web Technologies:</strong> REST API Development, Microservices Architecture</li>
+            <li><strong>Database:</strong> MS SQL Server</li>
+            <li><strong>Tools:</strong> Maven, SVN, Git (GitHub, GitLab, GitBash), Postman, SonarQube</li>
+            <li><strong>Testing:</strong> Junit 5, Mockito, Kafka</li>
+            <li><strong>IDEs:</strong> Eclipse, VS Code, Spring Tool Suite</li>
+            <li><strong>Methodologies:</strong> Agile (Scrum)</li>
+            <li><strong>Documentation:</strong> Jira, Confluence</li>
+          </ul>
+        </section>
+
+        <section id="experience">
+          <h2>WORK EXPERIENCE</h2>
+        </section>
+
+        <section className="experience-block">
+          <h3>Novillex Technologies Pvt. Ltd. Pune</h3>
+  <p><strong>Role:</strong> Software Developer</p>
+  <p><strong>Duration:</strong> Oct-2023 – Present</p>
+  <p><strong>Project:</strong> Fin-Wiz (Core Banking Solution)</p>
+  <p><strong>Description:</strong> Developed a Core Banking Solution for HOSPET Bank and SHAHU Bank using Java 8+, Spring Boot, Hibernate. Key modules include DEAF, Investment, AML, CKYC integration.</p>
+  <p><strong>Technologies:</strong> Java 8+, Spring Boot, Hibernate, REST, MS SQL Server, Git, Jira</p>
+  <p><strong>Responsibilities:</strong></p>
+  <ul>
+    <li>Developed REST APIs and backend logic for core modules</li>
+    <li>Collaborated with QA and UI teams to deliver features on time</li>
+    <li>Resolved critical issues in production</li>
+  </ul>
+  <p><strong>Achievements:</strong></p>
+  <ul>
+    <li>Delivered complete functional modules for Core Banking</li>
+    <li>Praised for clean and secure API design</li>
+  </ul>
+        </section>
+
+        <section className="experience-block">
+          <h3>Anweb Technologies</h3>
+  <p><strong>Role:</strong> Software Developer Intern</p>
+  <p><strong>Duration:</strong> April – May 2023</p>
+  <p><strong>Project:</strong> Finance Management System</p>
+  <p><strong>Description:</strong> Built a multi-module application with roles like Admin, Employee, Customer. Supported registration and modification workflows.</p>
+  <p><strong>Technologies:</strong> Core Java, J2EE, Hibernate, JSP, Servlet</p>
+  <p><strong>Responsibilities:</strong></p>
+  <ul>
+    <li>Backend development using Java and Servlets</li>
+    <li>Integrated Hibernate ORM with MySQL</li>
+    <li>Built REST endpoints and tested with Postman</li>
+    <li>Involved in documentation and unit testing</li>
+  </ul>
+        </section>
+
+         <section id="education">
+          <h2>EDUCATION</h2>
+          <p><strong>B.Sc (Computer Science)</strong><br />
+          Dr. Babasaheb Ambedkar Marathwada University, Aurangabad<br />
+          Percentage: 76.63% (Sep 2020 - May 2023)</p>
+        </section>
+
+        <section id="languages">
+          <h2>LANGUAGES</h2>
+          <ul>
+            <li>English</li>
+            <li>Hindi</li>
+            <li>Marathi</li>
+          </ul>
+        </section>
+
+        <section id="certifications">
+          <h2>CERTIFICATIONS</h2>
+          <ul>
+            <li>Java Backend Development - Exponent IT Training & Services, Pune</li>
+            <li>Spring & Microservices - Udemy</li>
+          </ul>
+        </section>
+
+        <section id="declaration">
+          <h2>DECLARATION</h2>
+          <p>
+            I hereby declare that all the information furnished above is true to the best of my knowledge and belief.
+          </p>
+          <p>- Akshay Bade</p>
+
+          <div className="download-buttons">
+            <button onClick={generatePDF}>Download PDF</button>
+          </div>
+        </section>
+      </div>
+    );
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
+</body>
 </html>
